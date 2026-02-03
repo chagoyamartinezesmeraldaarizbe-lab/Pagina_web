@@ -1,75 +1,95 @@
 /* Configuración base */
+:root {
+    --vino: #6d1d38;
+    --azul: #008fcc;
+    --verde: #28a745;
+    --gris: #cccccc;
+    --negro: #1a1a1a;
+}
+
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #ffffff;
-    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* Botón de apertura */
-.menu-btn {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    background: #000;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-}
-
-/* Contenedor del menú (oculto por defecto) */
+/* Menú Lateral (Overlay) */
 .overlay {
-    display: none; /* Se activa con JS */
+    display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
     z-index: 1000;
 }
 
-/* Caja blanca del menú */
 .menu-content {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 70%; /* En móviles ocupa el 70% del ancho */
-    max-width: 300px;
+    top: 0; left: 0;
+    width: 70%; max-width: 300px;
     height: 100%;
     background: white;
     padding: 20px;
     box-shadow: 2px 0 10px rgba(0,0,0,0.2);
 }
 
-/* Botón cerrar */
-.close-btn {
-    font-size: 30px;
-    background: none;
-    border: none;
+/* Botones y Secciones */
+.menu-btn { position: fixed; top: 20px; left: 20px; padding: 10px 20px; cursor: pointer; background: var(--negro); color: #fff; border: none; border-radius: 5px; z-index: 900; }
+.hidden { display: none !important; }
+.container { padding: 80px 20px; }
+
+/* Card de Avance */
+.card-avance {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.progress-bar-container { background: #eee; border-radius: 15px; height: 25px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
+.progress-fill { background: var(--azul); height: 100%; width: 0%; transition: width 0.5s; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8em; }
+
+/* Modal del Mapa */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    padding: 25px;
+    border-radius: 20px;
+    overflow-y: auto;
+}
+
+/* Cuadrícula del Mapa (Botones de Materias) */
+.map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-top: 20px; }
+.sem-header { grid-column: 1 / -1; background: var(--vino); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em; margin-top: 10px; }
+
+.subject-box {
+    padding: 10px;
+    border: 2px solid var(--gris);
+    border-radius: 8px;
+    background: #fff;
     cursor: pointer;
-    float: right;
+    font-size: 0.75em;
+    text-align: center;
+    transition: 0.3s;
 }
 
-/* Lista de opciones */
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 60px;
-}
+.subject-box.passed { background: var(--verde); color: white; border-color: #1e7e34; }
+.subject-box.locked { opacity: 0.4; cursor: not-allowed; background: #f0f0f0; }
 
-nav ul li {
-    margin-bottom: 20px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #333;
-    font-size: 1.2rem;
-    display: block;
-}
+.btn-main { background: var(--vino); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-close-modal { margin-top: 20px; padding: 10px; width: 100%; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; }
