@@ -5,83 +5,79 @@
     --gris: #cccccc;
 }
 
-body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; margin: 0; }
 
-/* Botón Menú Principal */
 .menu-btn {
     position: fixed; top: 20px; left: 20px;
     padding: 12px 25px; background: var(--vino);
-    color: white; border: none; border-radius: 30px;
-    cursor: pointer; font-weight: bold; transition: 0.3s;
+    color: white; border: none; border-radius: 25px;
+    cursor: pointer; font-weight: bold; z-index: 100;
 }
-
-.menu-btn:hover { transform: scale(1.05); background: #802444; }
 
 /* Menú Lateral */
 .overlay {
     display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-    z-index: 1000; backdrop-filter: blur(3px);
+    width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+    z-index: 1000;
 }
 
 .menu-content {
-    position: absolute; left: 0; width: 280px; height: 100%;
-    background: white; padding: 25px; box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+    position: absolute; left: 0; width: 260px; height: 100%;
+    background: white; padding: 20px; box-shadow: 4px 0 10px rgba(0,0,0,0.1);
 }
 
-/* --- ANIMACIONES --- */
+.close-btn { float: right; font-size: 25px; border: none; background: none; cursor: pointer; }
+
+/* --- ANIMACIÓN DESPLEGABLE --- */
 .dropdown-container {
-    display: none;
+    max-height: 0;
     overflow: hidden;
-    background: #fdfdfd;
-    border-left: 3px solid var(--azul);
-    margin-left: 10px;
-    animation: slideDown 0.4s ease-out forwards; /* Animación de entrada */
+    transition: max-height 0.4s ease-out, opacity 0.3s ease;
+    opacity: 0;
+    background: #f9f9f9;
+    display: block; /* Debe ser block para que max-height funcione */
 }
 
-@keyframes slideDown {
-    from { opacity: 0; max-height: 0; }
-    to { opacity: 1; max-height: 200px; }
+.dropdown-container.show {
+    max-height: 200px; /* Ajustar según contenido */
+    opacity: 1;
+    margin-top: 5px;
+    border-left: 4px solid var(--azul);
 }
 
-.subject-box {
-    transition: all 0.3s ease; /* Animación para el mapa */
-}
-
-.subject-box.passed {
-    background: var(--verde) !important;
-    color: white;
-    transform: scale(1.02);
-}
-
-/* Estilos de botones */
 .dropdown-btn {
     width: 100%; text-align: left; background: none; border: none;
-    font-size: 1.1rem; padding: 15px 0; cursor: pointer; font-weight: 600;
+    font-size: 1.1rem; padding: 15px 5px; cursor: pointer; font-weight: bold;
+    border-bottom: 1px solid #eee;
 }
 
 .sub-link {
     width: 100%; text-align: left; background: none; border: none;
-    padding: 12px; color: #555; cursor: pointer; transition: 0.2s;
+    padding: 12px 20px; color: #444; cursor: pointer; display: block;
 }
 
-.sub-link:hover { color: var(--azul); padding-left: 20px; }
+.sub-link:hover { background: #eef7ff; color: var(--azul); }
 
-/* Grid del Mapa */
-.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-.sem-header { grid-column: span 2; color: var(--vino); font-weight: bold; border-bottom: 1px solid #eee; padding: 5px 0; font-size: 0.9em; }
+/* --- MAPA CURRICULAR --- */
+.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
 
 .subject-box {
-    padding: 10px; border: 1.5px solid #eee; border-radius: 8px;
-    font-size: 0.75rem; cursor: pointer; background: #fff;
-    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px; border: 2px solid #ddd; border-radius: 10px;
+    font-size: 0.8rem; cursor: pointer; background: white;
+    transition: all 0.2s ease; display: flex; flex-direction: column;
 }
 
-.subject-box.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
+.subject-box:active { transform: scale(0.95); }
+
+.subject-box.passed { background: var(--verde) !important; border-color: #1e7e34; color: white; }
+
+.subject-box.locked { background: #f2f2f2; color: #999; cursor: not-allowed; border-style: dashed; }
+
+.sem-header { grid-column: span 2; color: var(--vino); font-weight: bold; margin-top: 10px; font-size: 0.9em; text-align: left; border-bottom: 1px solid var(--vino); }
 
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-.card-ui { background: white; padding: 20px; border-radius: 15px; width: 95%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
-.progress-bar-container { background: #eee; border-radius: 10px; height: 18px; margin: 10px 0; overflow: hidden; }
-.progress-fill { background: var(--azul); height: 100%; width: 0%; color: white; font-size: 0.7em; display: flex; align-items: center; justify-content: center; transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.card-ui { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto; }
+.progress-bar-container { background: #eee; border-radius: 10px; height: 20px; margin-bottom: 15px; overflow: hidden; }
+.progress-fill { background: var(--azul); height: 100%; width: 0%; color: white; font-size: 0.75em; display: flex; align-items: center; justify-content: center; transition: width 0.5s ease; }
 .hidden { display: none !important; }
-.btn-close-modal { width: 100%; margin-top: 20px; padding: 12px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; }
+.btn-close-modal { width: 100%; margin-top: 20px; padding: 15px; background: var(--vino); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
