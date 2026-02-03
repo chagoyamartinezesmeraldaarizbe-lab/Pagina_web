@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página con Menú y Mapa Curricular</title>
+    <title>Portal Académico ESCOM</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="initApp()">
@@ -15,37 +15,34 @@
             <button id="closeBtn" class="close-btn">&times;</button>
             <nav>
                 <ul>
-                    <li><a href="#" onclick="showSection('inicio')">Inicio</a></li>
-                    <li><a href="#" onclick="showSection('estudiante')">Estudiante</a></li>
-                    <li><a href="#" onclick="showSection('personal')">Personal</a></li>
+                    <li><a href="#">Inicio</a></li>
+                    <li>
+                        <button class="dropdown-btn" onclick="toggleDropdown('student-opts')">Estudiante ▾</button>
+                        <div id="student-opts" class="dropdown-container">
+                            <button onclick="openMap()" class="sub-link">Mapa Curricular</button>
+                            <button class="sub-link">Horario (Próximamente)</button>
+                        </div>
+                    </li>
+                    <li><a href="#">Personal</a></li>
+                    <li><a href="#">Otros</a></li>
                 </ul>
             </nav>
         </div>
     </div>
 
-    <main class="container">
-        <section id="section-estudiante" class="content-section hidden">
-            <h2>Área Académica</h2>
+    <div id="map-modal" class="modal-overlay hidden">
+        <div class="card-ui">
+            <h3 style="color:#008fcc">Mapa Curricular ISC 2020</h3>
+            <div id="pBarContainer" class="progress-bar-container">
+                <div id="pBar" class="progress-fill">0%</div>
+            </div>
+            <p id="creditosInfo" style="font-size:0.8em; margin-bottom:15px;"></p>
             
-            <div class="card-avance">
-                <small>AVANCE TOTAL ISC 2020</small>
-                <div class="progress-bar-container">
-                    <div id="pBar" class="progress-fill">0%</div>
-                </div>
-                <p id="creditosInfo"></p>
-                
-                <button class="btn-main" onclick="openMap()">Abrir Mapa Curricular</button>
-            </div>
-        </section>
-
-        <div id="map-modal" class="modal hidden">
-            <div class="modal-content">
-                <h3>Mapa Curricular Interactivo</h3>
-                <div class="map-grid" id="mapGrid"></div>
-                <button onclick="closeMap()" class="btn-close-modal">Cerrar Mapa</button>
-            </div>
+            <div class="map-grid" id="mapGrid"></div>
+            
+            <button onclick="closeMap()" class="btn-close-modal">Cerrar Mapa</button>
         </div>
-    </main>
+    </div>
 
     <script src="script.js"></script>
 </body>
