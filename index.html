@@ -1,64 +1,84 @@
-:root {
-    --vino: #6d1d38;
-    --azul: #008fcc;
-    --verde: #28a745;
-    --naranja: #e67e22;
-    --rojo: #dc3545;
-    --gris-claro: #f4f4f4;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Académico ESCOM - Esmeralda</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="initApp()">
 
-body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; color: #333; }
+    <button id="openBtn" class="menu-btn">☰ Menú</button>
 
-.main-layout { padding: 80px 40px 20px; }
-.user-header { text-align: left; margin-bottom: 30px; }
-.welcome-text { margin: 0; font-size: 2.2rem; color: var(--vino); font-weight: bold; }
-.subtitle { margin: 0; color: #666; font-size: 1rem; }
-.card-home { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    <main id="home-content" class="main-layout">
+        <header class="user-header">
+            <h1 class="welcome-text">Bienvenida, Esmeralda</h1>
+            <p class="subtitle">Ingeniería en Sistemas Computacionales</p>
+        </header>
 
-.menu-btn { position: fixed; top: 20px; right: 20px; padding: 12px 25px; background: var(--vino); color: white; border: none; border-radius: 25px; cursor: pointer; z-index: 100; font-weight: bold; }
-.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; }
-.menu-content { position: absolute; left: 0; width: 280px; height: 100%; background: white; padding: 25px; box-shadow: 4px 0 10px rgba(0,0,0,0.1); }
-.nav-link-main, .dropdown-btn { width: 100%; text-align: left; background: none; border: none; padding: 15px 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; border-bottom: 1px solid #eee; font-family: inherit; }
-.dropdown-container { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease-in-out; background: #fafafa; }
-.dropdown-container.show { max-height: 250px; opacity: 1; border-left: 4px solid var(--azul); }
-.sub-link { width: 100%; text-align: left; background: none; border: none; padding: 12px 25px; cursor: pointer; display: block; font-size: 1rem; color: #444; }
+        <section class="dashboard">
+            <div class="card-home">
+                <h3>📌 Tareas Pendientes (Vista Rápida)</h3>
+                <div id="homeTaskList"></div>
+            </div>
+        </section>
+    </main>
 
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; }
-.card-ui { background: white; padding: 30px; border-radius: 20px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; }
-.task-manager-container { max-width: 1100px; }
-.hidden { display: none !important; }
+    <div id="menuOverlay" class="overlay">
+        <div class="menu-content">
+            <button id="closeBtn" class="close-btn">&times;</button>
+            <nav>
+                <ul class="nav-list">
+                    <li><button onclick="showHome()" class="nav-link-main">🏠 Inicio</button></li>
+                    <li class="nav-item-container">
+                        <button class="dropdown-btn" onclick="toggleDropdown('student-opts')">Estudiante ▾</button>
+                        <div id="student-opts" class="dropdown-container">
+                            <button onclick="openMap()" class="sub-link">📍 Mapa Curricular</button>
+                            <button onclick="openTasks()" class="sub-link">📝 Gestión de Tareas</button>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
 
-/* TAREAS ESTILO IMAGEN */
-.section-title { font-weight: bold; margin-bottom: 25px; color: #000; font-size: 1.8rem; }
-.task-form-row { display: grid; grid-template-columns: 2fr 1fr 1fr 150px; gap: 15px; background: #fff; padding: 20px; border-radius: 15px; border: 1px solid #eee; }
-.input-main, .input-date, .input-select { padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 1rem; }
-.btn-programar { background: var(--vino); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
-.tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
+    <div id="map-modal" class="modal-overlay hidden">
+        <div class="card-ui">
+            <h3 style="color:var(--azul); margin-top:0;">Mapa Curricular ISC 2020</h3>
+            <div class="progress-bar-container">
+                <div id="pBar" class="progress-fill">0%</div>
+            </div>
+            <div id="mapGrid" class="map-grid"></div>
+            <button onclick="closeModal('map-modal')" class="btn-close-modal">Regresar al Inicio</button>
+        </div>
+    </div>
 
-.task-card { background: white; border-radius: 12px; padding: 25px 20px; position: relative; border-left: 10px solid #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column; }
-.priority-tag { position: absolute; top: 12px; left: 15px; font-size: 0.75rem; font-weight: bold; padding: 2px 10px; border-radius: 4px; color: white; }
-.task-card-title { margin-top: 20px; font-size: 1.2rem; font-weight: bold; color: #222; }
-.task-card-date { font-size: 0.9rem; color: #777; margin-top: 8px; }
+    <div id="task-modal" class="modal-overlay hidden">
+        <div class="card-ui task-manager-container">
+            <h2 class="section-title">Gestor de Tareas e Historial</h2>
+            <div class="task-form-row">
+                <input type="hidden" id="editId">
+                <input type="text" id="tIn" placeholder="Materia y Tarea..." class="input-main">
+                <input type="date" id="tDate" class="input-date">
+                <select id="tUrg" class="input-select">
+                    <option value="1">Baja</option>
+                    <option value="2" selected>Media</option>
+                    <option value="3">Alta</option>
+                </select>
+                <button id="btnSaveTask" onclick="addTask()" class="btn-programar">Programar</button>
+            </div>
+            <button id="btnCancelEdit" onclick="resetTaskForm()" class="hidden btn-cancel-edit">Cancelar Edición</button>
 
-/* NUEVO: ESTILO DÍAS RESTANTES */
-.days-left { font-size: 0.85rem; font-weight: bold; margin-top: 5px; color: var(--azul); }
-.days-urgent { color: var(--rojo); animation: blink 1.5s infinite; }
-@keyframes blink { 50% { opacity: 0.6; } }
+            <h3 class="list-title">Tareas Pendientes</h3>
+            <div id="pendingList" class="tasks-grid"></div>
 
-.task-card-actions { position: absolute; bottom: 15px; right: 15px; display: flex; gap: 10px; }
-.action-icon { background: #f0f0f0; border: none; border-radius: 8px; width: 35px; height: 35px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.action-icon:hover { background: #e0e0e0; transform: translateY(-2px); }
+            <h3 class="list-title">Historial de Éxito</h3>
+            <div id="completedList" class="tasks-grid"></div>
 
-.card-urg-3 { border-left-color: var(--rojo); } .tag-urg-3 { background: var(--rojo); }
-.card-urg-2 { border-left-color: var(--naranja); } .tag-urg-2 { background: var(--naranja); }
-.card-urg-1 { border-left-color: var(--azul); } .tag-urg-1 { background: var(--azul); }
+            <button onclick="closeModal('task-modal')" class="btn-close-modal" style="background:#555">Cerrar Ventana</button>
+        </div>
+    </div>
 
-/* MAPA */
-.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-.sem-header { grid-column: span 2; color: var(--vino); font-weight: bold; border-bottom: 2px solid var(--vino); margin-top: 15px; }
-.subject-box { padding: 15px; border: 1px solid #ddd; border-radius: 10px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-.subject-box.passed { background: var(--verde) !important; color: white; border-color: #1e7e34; }
-.subject-box.locked { background: #eee; color: #999; cursor: not-allowed; opacity: 0.6; }
-.progress-bar-container { background: #eee; border-radius: 10px; height: 20px; margin-bottom: 15px; overflow: hidden; }
-.progress-fill { background: var(--azul); height: 100%; width: 0%; color: white; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; transition: width 0.6s ease; }
-.btn-close-modal { width: 100%; margin-top: 25px; padding: 15px; background: var(--vino); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+    <script src="script.js"></script>
+</body>
+</html>
