@@ -2,7 +2,7 @@ const boletaUnica = "2026630001";
 let tasks = JSON.parse(localStorage.getItem('tasks_estudiante')) || [];
 let approvedIds = JSON.parse(localStorage.getItem(`map_${boletaUnica}`)) || [];
 
-// Mapa ISC 2020 Completo con Seriación
+// Base de datos Mapa ISC 2020
 const materiasMap = [
 
     // SEMESTRE 1
@@ -81,102 +81,42 @@ function showHome() { document.getElementById('menuOverlay').style.display = 'no
 document.getElementById('openBtn').onclick = () => document.getElementById('menuOverlay').style.display = 'block';
 document.getElementById('closeBtn').onclick = () => document.getElementById('menuOverlay').style.display = 'none';
 
-// --- NUEVA FUNCIÓN: CÁLCULO DE DÍAS ---
-function calculateDaysLeft(targetDate) {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const target = new Date(targetDate + "T00:00:00");
-    const diffTime = target - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return "Vencida";
-    if (diffDays === 0) return "¡Vence hoy!";
-    if (diffDays === 1) return "Queda 1 día";
-    return `Faltan ${diffDays} días`;
+// --- MAPA CURRICULAR (CORREGIDO) ---
+function openMap() {
+    renderMap();
+    document.getElementById('map-modal').classList.remove('hidden');
+    document.getElementById('menuOverlay').style.display = 'none';
 }
-
-// --- TAREAS ---
-function openTasks() { renderTasks(); document.getElementById('task-modal').classList.remove('hidden'); document.getElementById('menuOverlay').style.display = 'none'; }
-
-function addTask() {
-    const n = document.getElementById('tIn').value, d = document.getElementById('tDate').value, u = document.getElementById('tUrg').value;
-    const editId = document.getElementById('editId').value;
-    if (!n || !d) return alert("Llena los campos");
-
-    if (editId) {
-        const idx = tasks.findIndex(t => t.id == editId);
-        tasks[idx] = { ...tasks[idx], n, d, urg: parseInt(u) };
-    } else {
-        tasks.push({ id: Date.now(), n, d, urg: parseInt(u), done: false });
-    }
-    saveAndRefresh(); resetTaskForm();
-}
-
-function saveAndRefresh() {
-    localStorage.setItem('tasks_estudiante', JSON.stringify(tasks));
-    renderTasks(); renderHomeTasks();
-}
-
-function renderTasks() {
-    const pList = document.getElementById('pendingList'), cList = document.getElementById('completedList');
-    pList.innerHTML = ""; cList.innerHTML = "";
-
-    tasks.forEach(t => {
-        const priorityText = t.urg === 3 ? "Alta" : t.urg === 2 ? "Media" : "Baja";
-        const daysLeftStr = calculateDaysLeft(t.d);
-        const isUrgent = daysLeftStr.includes("hoy") || daysLeftStr.includes("1 día") || daysLeftStr === "Vencida";
-
-        const cardHTML = `
-            <div class="task-card card-urg-${t.urg}">
-                <span class="priority-tag tag-urg-${t.urg}">${priorityText}</span>
-                <div class="task-card-title">${t.n}</div>
-                <div class="task-card-date">Fecha: ${t.d}</div>
-                ${!t.done ? `<div class="days-left ${isUrgent ? 'days-urgent' : ''}">${daysLeftStr}</div>` : ''}
-                <div class="task-card-actions">
-                    ${!t.done ? `<button onclick="editTask(${t.id})" class="action-icon">✏️</button>
-                                 <button onclick="doneT(${t.id})" class="action-icon">✅</button>` : ''}
-                    <button onclick="delT(${t.id})" class="action-icon">🗑️</button>
-                </div>
-            </div>`;
-        t.done ? cList.innerHTML += cardHTML : pList.innerHTML += cardHTML;
-    });
-}
-
-function doneT(id) { if (confirm("¿Concluida?")) { tasks.find(x => x.id === id).done = true; saveAndRefresh(); } }
-function delT(id) { if (confirm("¿Eliminar?")) { tasks = tasks.filter(x => x.id !== id); saveAndRefresh(); } }
-function editTask(id) {
-    const t = tasks.find(x => x.id === id);
-    document.getElementById('editId').value = t.id;
-    document.getElementById('tIn').value = t.n;
-    document.getElementById('tDate').value = t.d;
-    document.getElementById('tUrg').value = t.urg;
-    document.getElementById('btnSaveTask').innerText = "Guardar";
-    document.getElementById('btnCancelEdit').classList.remove('hidden');
-}
-function resetTaskForm() {
-    document.getElementById('editId').value = ""; document.getElementById('tIn').value = ""; document.getElementById('tDate').value = "";
-    document.getElementById('btnSaveTask').innerText = "Programar"; document.getElementById('btnCancelEdit').classList.add('hidden');
-}
-
-// --- MAPA CURRICULAR ---
-function openMap() { renderMap(); document.getElementById('map-modal').classList.remove('hidden'); document.getElementById('menuOverlay').style.display = 'none'; }
 
 function renderMap() {
-    const g = document.getElementById('mapGrid'); g.innerHTML = "";
+    const g = document.getElementById('mapGrid');
+    if (!g) return;
+    g.innerHTML = "";
     let curSem = 0;
+
     materiasMap.forEach(m => {
-        if(m.s !== curSem) { curSem = m.s; g.innerHTML += `<div class="sem-header">Semestre ${curSem}</div>`; }
-        const isLocked = m.reqs && m.reqs.some(r => !approvedIds.includes(r));
+        if(m.s !== curSem) {
+            curSem = m.s;
+            const h = document.createElement('div');
+            h.className = 'sem-header';
+            h.innerText = `Semestre ${curSem}`;
+            g.appendChild(h);
+        }
+
+        const isLocked = m.reqs && m.reqs.some(reqId => !approvedIds.includes(reqId));
         const isPassed = approvedIds.includes(m.id);
-        
+
         const box = document.createElement('div');
         box.className = `subject-box ${isLocked ? 'locked' : ''} ${isPassed ? 'passed' : ''}`;
         box.innerHTML = `<strong>${m.n}</strong><span>${isLocked ? '🔒' : m.c + ' cr'}</span>`;
         
-        // CORRECCIÓN: Evento de clic activo
+        // Asignación de evento explícita
         box.onclick = () => {
-            if(isLocked) alert("Materia Bloqueada por requisitos.");
-            else toggleSubject(m.id);
+            if(isLocked) {
+                alert("Materia Bloqueada: Debes aprobar primero los requisitos previos.");
+            } else {
+                toggleSubject(m.id);
+            }
         };
         g.appendChild(box);
     });
@@ -184,14 +124,14 @@ function renderMap() {
 }
 
 function toggleSubject(id) {
-    if(approvedIds.includes(id)) {
+    if (approvedIds.includes(id)) {
         approvedIds = approvedIds.filter(x => x !== id);
-        checkCascade();
+        checkCascade(); 
     } else {
         approvedIds.push(id);
     }
     localStorage.setItem(`map_${boletaUnica}`, JSON.stringify(approvedIds));
-    renderMap();
+    renderMap(); // Redibujar mapa para ver cambios
 }
 
 function checkCascade() {
@@ -211,14 +151,84 @@ function checkCascade() {
 function updateProgress() {
     const totalC = materiasMap.reduce((a, b) => a + b.c, 0);
     const appC = materiasMap.filter(m => approvedIds.includes(m.id)).reduce((a, b) => a + b.c, 0);
-    const p = Math.round((appC/totalC)*100) || 0;
-    document.getElementById('pBar').style.width = p + "%";
-    document.getElementById('pBar').textContent = p + "%";
+    const percent = Math.round((appC / totalC) * 100) || 0;
+    const pBar = document.getElementById('pBar');
+    if(pBar) {
+        pBar.style.width = percent + "%";
+        pBar.textContent = percent + "%";
+    }
+}
+
+// --- GESTIÓN DE TAREAS ---
+function calculateDaysLeft(targetDate) {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const target = new Date(targetDate + "T00:00:00");
+    const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+    if (diffDays < 0) return "Vencida";
+    if (diffDays === 0) return "¡Vence hoy!";
+    return `Faltan ${diffDays} días`;
+}
+
+function openTasks() { renderTasks(); document.getElementById('task-modal').classList.remove('hidden'); document.getElementById('menuOverlay').style.display = 'none'; }
+
+function addTask() {
+    const n = document.getElementById('tIn').value, d = document.getElementById('tDate').value, u = document.getElementById('tUrg').value;
+    const editId = document.getElementById('editId').value;
+    if (!n || !d) return alert("Llena los campos");
+    if (editId) {
+        const idx = tasks.findIndex(t => t.id == editId);
+        tasks[idx] = { ...tasks[idx], n, d, urg: parseInt(u) };
+    } else {
+        tasks.push({ id: Date.now(), n, d, urg: parseInt(u), done: false });
+    }
+    saveAndRefresh(); resetTaskForm();
+}
+
+function saveAndRefresh() {
+    localStorage.setItem('tasks_estudiante', JSON.stringify(tasks));
+    renderTasks(); renderHomeTasks();
+}
+
+function renderTasks() {
+    const pList = document.getElementById('pendingList'), cList = document.getElementById('completedList');
+    if(!pList || !cList) return;
+    pList.innerHTML = ""; cList.innerHTML = "";
+    tasks.forEach(t => {
+        const dStr = calculateDaysLeft(t.d);
+        const cardHTML = `
+            <div class="task-card card-urg-${t.urg}">
+                <strong>${t.n}</strong><br><small>Fecha: ${t.d}</small>
+                ${!t.done ? `<div class="days-left">${dStr}</div>` : ''}
+                <div class="task-card-actions">
+                    ${!t.done ? `<button onclick="editTask(${t.id})" class="action-icon">✏️</button><button onclick="doneT(${t.id})" class="action-icon">✅</button>` : ''}
+                    <button onclick="delT(${t.id})" class="action-icon">🗑️</button>
+                </div>
+            </div>`;
+        t.done ? cList.innerHTML += cardHTML : pList.innerHTML += cardHTML;
+    });
+}
+
+function doneT(id) { if (confirm("¿Marcar como concluida?")) { tasks.find(x => x.id === id).done = true; saveAndRefresh(); } }
+function delT(id) { if (confirm("¿Eliminar?")) { tasks = tasks.filter(x => x.id !== id); saveAndRefresh(); } }
+function editTask(id) {
+    const t = tasks.find(x => x.id === id);
+    document.getElementById('editId').value = t.id;
+    document.getElementById('tIn').value = t.n;
+    document.getElementById('tDate').value = t.d;
+    document.getElementById('tUrg').value = t.urg;
+    document.getElementById('btnSaveTask').innerText = "Guardar";
+    document.getElementById('btnCancelEdit').classList.remove('hidden');
+}
+function resetTaskForm() {
+    document.getElementById('editId').value = ""; document.getElementById('tIn').value = ""; document.getElementById('tDate').value = "";
+    document.getElementById('btnSaveTask').innerText = "Programar"; document.getElementById('btnCancelEdit').classList.add('hidden');
 }
 
 function renderHomeTasks() {
     const homeList = document.getElementById('homeTaskList');
-    const pendings = tasks.filter(t => !t.done).sort((a,b)=>b.urg - a.urg);
+    if(!homeList) return;
+    const pendings = tasks.filter(t => !t.done);
     homeList.innerHTML = pendings.length ? "" : "<p>Sin pendientes.</p>";
     pendings.slice(0, 4).forEach(t => {
         homeList.innerHTML += `<div style="border-left:5px solid; margin-bottom:10px; padding:10px; background:#fff; border-radius:8px;" class="card-urg-${t.urg}">${t.n} - <small>${calculateDaysLeft(t.d)}</small></div>`;
