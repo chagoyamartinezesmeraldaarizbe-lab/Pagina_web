@@ -1,4 +1,3 @@
-/* Configuración base */
 :root {
     --vino: #6d1d38;
     --azul: #008fcc;
@@ -6,87 +5,83 @@
     --gris: #cccccc;
 }
 
-body, html {
-    margin: 0; padding: 0;
-    width: 100%; height: 100%;
-    background-color: #f4f4f4;
-    font-family: 'Segoe UI', Arial, sans-serif;
-}
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; }
 
+/* Botón Menú Principal */
 .menu-btn {
     position: fixed; top: 20px; left: 20px;
-    padding: 10px 20px; font-size: 18px;
-    cursor: pointer; background: var(--vino);
-    color: #fff; border: none; border-radius: 5px;
+    padding: 12px 25px; background: var(--vino);
+    color: white; border: none; border-radius: 30px;
+    cursor: pointer; font-weight: bold; transition: 0.3s;
 }
+
+.menu-btn:hover { transform: scale(1.05); background: #802444; }
 
 /* Menú Lateral */
 .overlay {
-    display: none; position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.5); z-index: 1000;
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+    z-index: 1000; backdrop-filter: blur(3px);
 }
 
 .menu-content {
-    position: absolute; top: 0; left: 0;
-    width: 70%; max-width: 300px; height: 100%;
-    background: white; padding: 20px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    position: absolute; left: 0; width: 280px; height: 100%;
+    background: white; padding: 25px; box-shadow: 5px 0 15px rgba(0,0,0,0.3);
 }
 
-.close-btn { font-size: 30px; background: none; border: none; cursor: pointer; float: right; }
-
-/* Dropdown dentro del menú */
-.dropdown-btn {
-    width: 100%; text-align: left; background: none;
-    border: none; font-size: 1.2rem; color: #333;
-    padding: 10px 0; cursor: pointer; font-family: inherit;
-}
-
+/* --- ANIMACIONES --- */
 .dropdown-container {
-    display: none; background-color: #f9f9f9; padding-left: 15px;
+    display: none;
+    overflow: hidden;
+    background: #fdfdfd;
+    border-left: 3px solid var(--azul);
+    margin-left: 10px;
+    animation: slideDown 0.4s ease-out forwards; /* Animación de entrada */
+}
+
+@keyframes slideDown {
+    from { opacity: 0; max-height: 0; }
+    to { opacity: 1; max-height: 200px; }
+}
+
+.subject-box {
+    transition: all 0.3s ease; /* Animación para el mapa */
+}
+
+.subject-box.passed {
+    background: var(--verde) !important;
+    color: white;
+    transform: scale(1.02);
+}
+
+/* Estilos de botones */
+.dropdown-btn {
+    width: 100%; text-align: left; background: none; border: none;
+    font-size: 1.1rem; padding: 15px 0; cursor: pointer; font-weight: 600;
 }
 
 .sub-link {
-    display: block; width: 100%; text-align: left;
-    background: none; border: none; padding: 10px;
-    color: var(--azul); cursor: pointer; font-size: 1rem;
+    width: 100%; text-align: left; background: none; border: none;
+    padding: 12px; color: #555; cursor: pointer; transition: 0.2s;
 }
 
-/* Modal y Mapa */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8); display: flex;
-    justify-content: center; align-items: center; z-index: 2000;
-}
+.sub-link:hover { color: var(--azul); padding-left: 20px; }
 
-.card-ui {
-    background: white; padding: 25px; border-radius: 15px;
-    width: 90%; max-width: 600px; max-height: 85vh;
-    overflow-y: auto; text-align: center;
-}
-
-.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+/* Grid del Mapa */
+.map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+.sem-header { grid-column: span 2; color: var(--vino); font-weight: bold; border-bottom: 1px solid #eee; padding: 5px 0; font-size: 0.9em; }
 
 .subject-box {
-    padding: 10px; border: 1px solid var(--gris);
-    border-radius: 8px; cursor: pointer; font-size: 0.8em;
+    padding: 10px; border: 1.5px solid #eee; border-radius: 8px;
+    font-size: 0.75rem; cursor: pointer; background: #fff;
     display: flex; justify-content: space-between; align-items: center;
-    background: #fff;
 }
 
-.subject-box.passed { background: var(--verde); color: white; }
-.subject-box.locked { opacity: 0.4; cursor: not-allowed; background: #eee; }
+.subject-box.locked { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
-.sem-header {
-    grid-column: span 2; font-weight: bold;
-    color: var(--vino); border-bottom: 2px solid var(--vino);
-    margin-top: 10px; text-align: left;
-}
-
-.progress-bar-container { background: #eee; border-radius: 10px; height: 20px; margin: 10px 0; overflow: hidden; }
-.progress-fill { background: var(--azul); height: 100%; width: 0%; color: white; font-size: 0.7em; display: flex; align-items: center; justify-content: center; transition: width 0.5s; }
-
-.btn-close-modal { background: var(--vino); color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 20px; cursor: pointer; }
-
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+.card-ui { background: white; padding: 20px; border-radius: 15px; width: 95%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+.progress-bar-container { background: #eee; border-radius: 10px; height: 18px; margin: 10px 0; overflow: hidden; }
+.progress-fill { background: var(--azul); height: 100%; width: 0%; color: white; font-size: 0.7em; display: flex; align-items: center; justify-content: center; transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .hidden { display: none !important; }
+.btn-close-modal { width: 100%; margin-top: 20px; padding: 12px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer; }
