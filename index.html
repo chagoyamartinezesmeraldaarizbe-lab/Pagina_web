@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página con Menú</title>
+    <title>Página con Menú y Mapa Curricular</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="initApp()">
 
     <button id="openBtn" class="menu-btn">☰ Menú</button>
 
@@ -15,14 +15,37 @@
             <button id="closeBtn" class="close-btn">&times;</button>
             <nav>
                 <ul>
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href="#">Estudiante</a></li>
-                    <li><a href="#">Personal</a></li>
-                    <li><a href="#">Otros</a></li>
+                    <li><a href="#" onclick="showSection('inicio')">Inicio</a></li>
+                    <li><a href="#" onclick="showSection('estudiante')">Estudiante</a></li>
+                    <li><a href="#" onclick="showSection('personal')">Personal</a></li>
                 </ul>
             </nav>
         </div>
     </div>
+
+    <main class="container">
+        <section id="section-estudiante" class="content-section hidden">
+            <h2>Área Académica</h2>
+            
+            <div class="card-avance">
+                <small>AVANCE TOTAL ISC 2020</small>
+                <div class="progress-bar-container">
+                    <div id="pBar" class="progress-fill">0%</div>
+                </div>
+                <p id="creditosInfo"></p>
+                
+                <button class="btn-main" onclick="openMap()">Abrir Mapa Curricular</button>
+            </div>
+        </section>
+
+        <div id="map-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Mapa Curricular Interactivo</h3>
+                <div class="map-grid" id="mapGrid"></div>
+                <button onclick="closeMap()" class="btn-close-modal">Cerrar Mapa</button>
+            </div>
+        </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
