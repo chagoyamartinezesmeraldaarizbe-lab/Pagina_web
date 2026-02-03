@@ -3,27 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Académico ESCOM</title>
+    <title>Portal Académico ESCOM - Esmeralda</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body onload="initApp()">
 
     <button id="openBtn" class="menu-btn">☰ Menú</button>
 
+    <main id="home-content" class="main-layout">
+        <header class="user-header">
+            <h1 class="welcome-text">Bienvenida, Esmeralda</h1>
+            <p class="subtitle">Ingeniería en Sistemas Computacionales</p>
+        </header>
+
+        <section class="dashboard">
+            <div class="card-home">
+                <h3>📌 Tareas Pendientes (Vista Rápida)</h3>
+                <div id="homeTaskList"></div>
+            </div>
+        </section>
+    </main>
+
     <div id="menuOverlay" class="overlay">
         <div class="menu-content">
             <button id="closeBtn" class="close-btn">&times;</button>
             <nav>
-                <ul>
-                    <li><a href="#" class="nav-link-main">Inicio</a></li>
+                <ul class="nav-list">
+                    <li><button onclick="showHome()" class="nav-link-main">🏠 Inicio</button></li>
                     <li class="nav-item-container">
-                        <button class="dropdown-btn" id="btnEstudiante">Estudiante ▾</button>
+                        <button class="dropdown-btn" onclick="toggleDropdown('student-opts')">Estudiante ▾</button>
                         <div id="student-opts" class="dropdown-container">
                             <button onclick="openMap()" class="sub-link">📍 Mapa Curricular</button>
-                            <button class="sub-link">📅 Horario</button>
+                            <button onclick="openTasks()" class="sub-link">📝 Gestión de Tareas</button>
                         </div>
                     </li>
-                    <li><a href="#" class="nav-link-main">Personal</a></li>
                 </ul>
             </nav>
         </div>
@@ -31,12 +44,38 @@
 
     <div id="map-modal" class="modal-overlay hidden">
         <div class="card-ui">
-            <h3 style="color:#008fcc; margin-top:0;">Mapa Curricular ISC 2020</h3>
+            <h3 style="color:var(--azul); margin-top:0;">Mapa Curricular ISC 2020</h3>
             <div class="progress-bar-container">
                 <div id="pBar" class="progress-fill">0%</div>
             </div>
-            <div class="map-grid" id="mapGrid"></div>
-            <button onclick="closeMap()" class="btn-close-modal">Cerrar y Guardar</button>
+            <div id="mapGrid" class="map-grid"></div>
+            <button onclick="closeModal('map-modal')" class="btn-close-modal">Regresar al Inicio</button>
+        </div>
+    </div>
+
+    <div id="task-modal" class="modal-overlay hidden">
+        <div class="card-ui task-manager-container">
+            <h2 class="section-title">Gestor de Tareas e Historial</h2>
+            <div class="task-form-row">
+                <input type="hidden" id="editId">
+                <input type="text" id="tIn" placeholder="Materia y Tarea..." class="input-main">
+                <input type="date" id="tDate" class="input-date">
+                <select id="tUrg" class="input-select">
+                    <option value="1">Baja</option>
+                    <option value="2" selected>Media</option>
+                    <option value="3">Alta</option>
+                </select>
+                <button id="btnSaveTask" onclick="addTask()" class="btn-programar">Programar</button>
+            </div>
+            <button id="btnCancelEdit" onclick="resetTaskForm()" class="hidden btn-cancel-edit">Cancelar Edición</button>
+
+            <h3 class="list-title">Tareas Pendientes</h3>
+            <div id="pendingList" class="tasks-grid"></div>
+
+            <h3 class="list-title">Historial de Éxito</h3>
+            <div id="completedList" class="tasks-grid"></div>
+
+            <button onclick="closeModal('task-modal')" class="btn-close-modal" style="background:#555">Cerrar Ventana</button>
         </div>
     </div>
 
