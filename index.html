@@ -16,15 +16,14 @@
             <nav>
                 <ul>
                     <li><a href="#">Inicio</a></li>
-                    <li>
+                    <li class="nav-item-container">
                         <button class="dropdown-btn" onclick="toggleDropdown('student-opts')">Estudiante ▾</button>
                         <div id="student-opts" class="dropdown-container">
-                            <button onclick="openMap()" class="sub-link">Mapa Curricular</button>
-                            <button class="sub-link">Horario (Próximamente)</button>
+                            <button onclick="openMap()" class="sub-link">📍 Mapa Curricular</button>
+                            <button class="sub-link">📅 Horario</button>
                         </div>
                     </li>
                     <li><a href="#">Personal</a></li>
-                    <li><a href="#">Otros</a></li>
                 </ul>
             </nav>
         </div>
@@ -33,14 +32,11 @@
     <div id="map-modal" class="modal-overlay hidden">
         <div class="card-ui">
             <h3 style="color:#008fcc">Mapa Curricular ISC 2020</h3>
-            <div id="pBarContainer" class="progress-bar-container">
+            <div class="progress-bar-container">
                 <div id="pBar" class="progress-fill">0%</div>
             </div>
-            <p id="creditosInfo" style="font-size:0.8em; margin-bottom:15px;"></p>
-            
             <div class="map-grid" id="mapGrid"></div>
-            
-            <button onclick="closeMap()" class="btn-close-modal">Cerrar Mapa</button>
+            <button onclick="closeMap()" class="btn-close-modal">Regresar</button>
         </div>
     </div>
 
